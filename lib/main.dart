@@ -3,6 +3,8 @@ import 'package:get/get.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:intl/intl.dart';
 import 'package:weather_app/consts/const.dart';
+import 'package:weather_app/controller/main_controller.dart';
+import 'package:weather_app/custom_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +18,9 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Weather App',
-      theme: ThemeData(fontFamily: poppins),
+      theme: CustomTheme.lightTheme,
+      darkTheme: CustomTheme.darkTheme,
+      themeMode: ThemeMode.system,
       home: WeatherApp(),
     );
   }
@@ -28,23 +32,30 @@ class WeatherApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var date = DateFormat("yMMMd").format(DateTime.now());
+    var theme=Theme.of(context);
+    var controller=Get.put(MainController());
     return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        title: "${date}".text.gray700.make(),
+        title: "${date}".text.color(theme.primaryColor).make(),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
-          IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.light_mode,
-                color: Vx.gray400,
-              )),
+          Obx(()=>
+            IconButton(
+                onPressed: () {
+                  controller.changeTheme();
+                },
+                icon: Icon(
+                  controller.isDark.value?Icons.light_mode:Icons.dark_mode,
+                  color: theme.iconTheme.color,
+                )),
+          ),
           IconButton(
               onPressed: () {},
               icon: Icon(
                 Icons.more_vert,
-                color: Vx.gray400,
+                color: theme.iconTheme.color,
               )),
         ],
       ),
@@ -57,7 +68,7 @@ class WeatherApp extends StatelessWidget {
             children: [
               "DHAKA"
                   .text
-                  .gray900
+                  .color(theme.primaryColor)
                   .size(30)
                   .letterSpacing(3)
                   .fontFamily(poppins_bold)
@@ -75,15 +86,15 @@ class WeatherApp extends StatelessWidget {
                     TextSpan(
                         text: "37$degree",
                         style: TextStyle(
-                            color: Vx.gray900,
+                            color: theme.primaryColor,
                             fontSize: 55,
                             fontFamily: poppins)),
                     TextSpan(
                         text: "Sunny",
                         style: TextStyle(
-                            color: Vx.gray700,
+                            color: theme.primaryColor,
                             fontSize: 14,
-                            fontFamily: poppins_light))
+                            fontFamily: poppins))
                   ]))
                 ],
               ),
@@ -94,16 +105,16 @@ class WeatherApp extends StatelessWidget {
                       onPressed: () {},
                       icon: Icon(
                         Icons.expand_less_rounded,
-                        color: Vx.gray400,
+                        color: theme.iconTheme.color,
                       ),
-                      label: "24$degree".text.size(12).gray400.make()),
+                      label: "24$degree".text.size(12).color(theme.iconTheme.color).make()),
                   TextButton.icon(
                       onPressed: () {},
                       icon: Icon(
                         Icons.expand_more_rounded,
-                        color: Vx.gray400,
+                        color: theme.iconTheme.color,
                       ),
-                      label: "16$degree".text.size(12).gray400.make()),
+                      label: "16$degree".text.size(12).color(theme.iconTheme.color).make()),
                 ],
               ),
               Row(
@@ -142,14 +153,14 @@ class WeatherApp extends StatelessWidget {
                     padding: EdgeInsets.all(8),
                     margin: EdgeInsets.only(right: 4),
                     decoration: BoxDecoration(
-                      color: cardColor,
+                      color: Vx.gray200,
                       borderRadius: BorderRadius.circular(12)
                     ),
                     child: Column(
                       children: [
-                        "${index+1} AM".text.gray200.make(),
+                        "${index+1} AM".text.gray800.make(),
                         Image.asset(img09n,width: 80,),
-                        "38$degree".text.white.make(),
+                        "38$degree".text.gray800.make(),
                       ],
                     ),
                   );
@@ -161,7 +172,7 @@ class WeatherApp extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  "Next 7 days".text.semiBold.make(),
+                  "Next 7 days".text.semiBold.color(theme.primaryColor).make(),
                   TextButton(onPressed: (){}, child: "View all".text.make())
                 ],
               ),
@@ -172,25 +183,26 @@ class WeatherApp extends StatelessWidget {
                   itemBuilder: (BuildContext context,int index){
                   var day=DateFormat("EEEE").format(DateTime.now().add(Duration(days: index+1)));
                 return Card(
+                  color: theme.cardColor,
                   child: Container(
                     padding: EdgeInsets.symmetric(horizontal: 8,vertical: 12),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(child: day.text.semiBold.make()),
+                        Expanded(child: day.text.color(theme.primaryColor).semiBold.make()),
                         Expanded(
                           child: TextButton.icon(
                               onPressed: () {},
                               icon:
                                 Image.asset(img50n,width: 40,),
-                              label: "24$degree".text.size(12).gray900.make()),
+                              label: "24$degree".text.size(12).color(theme.primaryColor).make()),
                         ),
                         RichText(text: TextSpan(
                           children: [
                             TextSpan(
                               text: "37$degree /",
                               style: TextStyle(
-                                color: Vx.gray800,
+                                color: theme.primaryColor,
                                 fontFamily: poppins,
                                 fontSize: 16
                               )
@@ -198,7 +210,7 @@ class WeatherApp extends StatelessWidget {
                             TextSpan(
                                 text: " 20$degree",
                                 style: TextStyle(
-                                    color: Vx.gray600,
+                                    color: theme.iconTheme.color,
                                     fontFamily: poppins,
                                     fontSize: 16
                                 )
